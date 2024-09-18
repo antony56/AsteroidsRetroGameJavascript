@@ -9,9 +9,15 @@ class Player {
   constructor({ position, velocity }) {
     this.position = position; // x,y αξονες
     this.velocity = velocity;
+    this.rotation = 0;
   }
   //draw γιατι ζωγραφιζουμε τον παιχτη
   draw() {
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.rotate(this.rotation);
+    ctx.translate(-this.position.x, -this.position.y);
+
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, 5, 0, Math.PI * 4, false);
     ctx.fillStyle = 'red';
@@ -22,9 +28,9 @@ class Player {
     ctx.lineTo(this.position.x - 10, this.position.y - 10);
     ctx.lineTo(this.position.x - 10, this.position.y + 10);
     ctx.closePath();
-
     ctx.strokeStyle = 'white';
     ctx.stroke();
+    ctx.restore();
   }
   update() {
     this.draw;
@@ -44,6 +50,10 @@ const keys = {
   d: { pressed: false },
 };
 
+const SPEED = 3;
+const ROTATION_SPEED = 0.08;
+const FRICTION = 0.97;
+
 function animate() {
   window.requestAnimationFrame(animate);
   console.log('animate');
@@ -52,11 +62,17 @@ function animate() {
 
   player.draw();
   player.update();
-  player.velocity.x = 0;
-  player.velocity.y = 0;
-  if (keys.w.pressed) player.velocity.x = 1;
-  if (keys.a.pressed) player.velocity.y = 1;
-  if (keys.d.pressed) player.rotation += 0.01;
+
+  if (keys.w.pressed) {
+    player.velocity.x = Math.cos(player.rotation) * SPEED;
+    player.velocity.y = Math.sin(player.rotation) * SPEED;
+  } else if (!keys.w.pressed) {
+    player.velocity.x *= FRICTION;
+    player.velocity.y *= FRICTION; //slowing down the player so it will be smoother for the user experience
+  }
+
+  if (keys.d.pressed) player.rotation += ROTATION_SPEED;
+  else if (keys.a.pressed) player.rotation -= ROTATION_SPEED;
 }
 animate();
 
