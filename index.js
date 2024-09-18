@@ -4,8 +4,6 @@ const ctx = canvas.getContext('2d');
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-ctx.fillStyle = 'black';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 class Player {
   constructor({ position, velocity }) {
@@ -14,6 +12,7 @@ class Player {
   }
   //draw γιατι ζωγραφιζουμε τον παιχτη
   draw() {
+    ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, 5, 0, Math.PI * 4, false);
     ctx.fillStyle = 'red';
     ctx.fill();
@@ -39,22 +38,30 @@ const player = new Player({
   velocity: { x: 0, y: 0 },
 });
 
-player.update();
-
 const keys = {
   w: { pressed: false },
+  a: { pressed: false },
+  d: { pressed: false },
 };
 
 function animate() {
   window.requestAnimationFrame(animate);
   console.log('animate');
-  player.draw();
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  player.draw();
+  player.update();
+  player.velocity.x = 0;
+  player.velocity.y = 0;
   if (keys.w.pressed) player.velocity.x = 1;
+  if (keys.a.pressed) player.velocity.y = 1;
+  if (keys.d.pressed) player.rotation += 0.01;
 }
 animate();
 
 window.addEventListener('keydown', (event) => {
+  //event name is representing the action we can use wtvr we want
   switch (event.code) {
     case 'KeyW':
       console.log('w was pressed');
@@ -62,11 +69,28 @@ window.addEventListener('keydown', (event) => {
       break;
     case 'KeyA':
       console.log('a was pressed');
+      keys.a.pressed = true;
       break;
     case 'KeyD':
       console.log('d was pressed');
-      break; //test2
+      keys.d.pressed = true;
+      break;
   }
 });
-//5
-//6
+window.addEventListener('keyup', (event) => {
+  //event name is representing the action we can use wtvr we want
+  switch (event.code) {
+    case 'KeyW':
+      console.log('w was pressed');
+      keys.w.pressed = false;
+      break;
+    case 'KeyA':
+      console.log('a was pressed');
+      keys.a.pressed = false;
+      break;
+    case 'KeyD':
+      console.log('d was pressed');
+      keys.d.pressed = false;
+      break;
+  }
+});
