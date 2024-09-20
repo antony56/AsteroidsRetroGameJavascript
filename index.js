@@ -140,6 +140,7 @@ window.addEventListener('keydown', (event) => {
           },
         })
       );
+      console.log(projectiles);
 
       break;
   }
