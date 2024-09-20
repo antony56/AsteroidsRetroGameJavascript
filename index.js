@@ -65,6 +65,33 @@ class Projectile {
     this.position.y += this.velocity.y;
   }
 }
+class Asteroid {
+  constructor({ position, velocity }) {
+    this.position = position;
+    this.velocity = velocity;
+    this.radius = 50 * Math.random() + 10;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(
+      this.position.x,
+      this.position.y,
+      this.radius,
+      0,
+      Math.PI * 2,
+      false
+    );
+    ctx.closePath();
+    ctx.strokeStyle = 'red';
+    ctx.fill();
+  }
+
+  update() {
+    this.draw();
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+  }
+}
 //const player2 = new Player({ x: 0, y: 0 });
 const player = new Player({
   position: { x: canvas.width / 2, y: canvas.height / 2 },
@@ -83,6 +110,21 @@ const FRICTION = 0.97;
 const PROJECTILE_SPEED = 3;
 
 const projectiles = [];
+const asteroids = [];
+
+window.setInterval(() => {
+  asteroids.push(
+    new Asteroid({
+      position: { x: 0, y: 0 },
+      velocity: { x: 1, y: 0 },
+    })
+  );
+}, 3000);
+//asteroid managment
+for (let i = asteroids.length - 1; i >= 0; i--) {
+  const asteroid = asteroids[i];
+  asteroid.update();
+}
 
 function animate() {
   window.requestAnimationFrame(animate);
